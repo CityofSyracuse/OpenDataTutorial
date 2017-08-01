@@ -6,6 +6,7 @@ Import modules
 
 ```python
 from arcgis.gis import *
+from IPython.display import display
 gis = GIS()
 ```
 
@@ -21,7 +22,7 @@ Display the map. At first you'll just see a blank map. The following steps will 
 
 
 ```python
-syracuse_map
+display(syracuse_map)
 ```
 
 
@@ -301,7 +302,7 @@ syracuse_map.basemap = 'gray'
 
 
 ```python
-syracuse_map
+display(syracuse_map)
 ```
 
 
