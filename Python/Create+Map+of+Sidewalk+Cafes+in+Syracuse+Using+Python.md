@@ -1,4 +1,10 @@
 
+##Find a place to eat outside in Syracuse!
+
+[DataCuse](http://data.syrgov.net)
+
+[Link to Sidewalk Cafe Dataset](http://data.syrgov.net/datasets/city-of-syracuse-sidewalk-cafes)
+
 
 ```python
 sidewalk_cafe_map
