@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <title>Potholes Filled</title>
+    <head>
+      <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css">
+      <script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js"></script>
+        <meta charset="utf-8">
+        <style>
+            h1 {
+              font: 18px sans-serif;
+            }
+            p {
+              font: 15px sans-serif;
+            }
+            table {
+                border-collapse: collapse;
+                border: 2px black solid;
+                font: 12px sans-serif;
+            }
+            th {
+                border: 1px black solid;
+                padding: 5px;
+                background-color: #F28B27;
+                color: white;
+            }
+            td {
+                border: 1px black solid;
+                padding: 5px;
+            }
+
+            tr:nth-child(even) {background-color: #CACACA}
+            tr:hover {background-color: #F28B27;
+              color: black;
+
+            }
+            #potholeCount{
+              font-size: 20px;
+              font-weight: bold;
+              color: green;
+            }
+        </style>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/alasql//0.3/alasql.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx.core.min.js"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+<script type='text/javascript'>//<![CDATA[
+window.onload=function(){
+window.downloadCSV =     function downloadCSV() {
+        alasql('SELECT * INTO CSV("https://opendata.arcgis.com/datasets/d4e8aa90043a4201b1d83e059558bef2_0.csv",{headers:true}) \
+                    FROM HTML("#algaetable",{headers:true})');
+    }
+}//]]>
+
+</script>
+
+
+    </head>
+    <body>
+
+      <div id="container">
+
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+
+        <script type="text/javascript"charset="utf-8">
+        var columns = ["DATE",  "SAMPLE LOCATION", "Test Type", "Detection Result"];
+
+d3.csv("https://opendata.arcgis.com/datasets/d4e8aa90043a4201b1d83e059558bef2_0.csv", function(error, data) {
+    // Print the table by placing a `div` with `id` of `container`
+    // below, e.g. <div id="container"></div>
+    var table = d3.select("#container").append("table").attr("class", "order-table table").attr("id", "algaetable"),
+        thead = table.append("thead"),
+        tbody = table.append("tbody");
+
+    thead.append("tr")
+    .selectAll("th")
+      .data(columns)
+    .enter()
+      .append("th")
+      .text(function(column) { return column; });
+
+    var rows = tbody.selectAll("tr")
+      .data(data)
+    .enter()
+      .append("tr");
+
+    var cells = rows.selectAll("td")
+      .data(function(row) {
+          return columns.map(function(column) {
+              return {column: column, value: row[column]};
+          });
+      })
+    .enter()
+      .append("td")
+      .text(function(d) { return d.value; });
+
+      document.getElementById("potholeCount").innerHTML = data.length;
+  });
+  (function(document) {
+    'use strict';
+
+    var LightTableFilter = (function(Arr) {
+
+      var _input;
+
+      function _onInputEvent(e) {
+        _input = e.target;
+        var tables = document.getElementsByClassName(_input.getAttribute('data-table'));
+        Arr.forEach.call(tables, function(table) {
+          Arr.forEach.call(table.tBodies, function(tbody) {
+            Arr.forEach.call(tbody.rows, _filter);
+          });
+        });
+      }
+
+      function _filter(row) {
+        var text = row.textContent.toLowerCase(), val = _input.value.toLowerCase();
+        row.style.display = text.indexOf(val) === -1 ? 'none' : 'table-row';
+      }
+
+      return {
+        init: function() {
+          var inputs = document.getElementsByClassName('light-table-filter');
+          Arr.forEach.call(inputs, function(input) {
+            input.oninput = _onInputEvent;
+          });
+        }
+      };
+    })(Array.prototype);
+
+    document.addEventListener('readystatechange', function() {
+      if (document.readyState === 'complete') {
+        LightTableFilter.init();
+      }
+    });
+
+  })(document);
+  document.querySelector("button").addEventListener("click", function () {
+    var html = document.querySelector("table").outerHTML;
+  export_table_to_csv(html, "table.csv");
+});
+        </script>
+
+
+      </div>
+    </body>
+</html>
