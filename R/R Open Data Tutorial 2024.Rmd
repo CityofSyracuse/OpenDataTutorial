@@ -1,0 +1,85 @@
+---
+title: "Syracuse R Open Data Tutorial"
+author: ""
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r library}
+library(httr)
+library(tidyverse)
+library(jsonlite)
+library(anytime)
+library(leaflet)
+```
+
+
+```{r API Req}
+url <- "https://services6.arcgis.com/bdPqSfflsdgFRVVM/arcgis/rest/services/Parking_Violations_2023_Present_CSV_Layer/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+x <- 0
+parking_violations <- data.frame()  
+
+while (TRUE) {
+  #increasing offset every loop to get all data
+  response <- GET(url, query = list(
+    supportsPagination = TRUE, 
+    resultOffset = x + 1)) 
+  #reading response
+  data <- content(response, as = "text", encoding = "UTF-8") %>%
+    fromJSON()
+  #pulling attributes from response
+  current_pull <- data$features$attributes
+  #combining adding new data on top of other pulls
+  parking_violations <- rbind(parking_violations, current_pull) 
+  #assigning x to length of dataset so the offset will start at the next row
+  x <- nrow(parking_violations)
+  #ending api request when the last response has less than 1000 rows of data
+  if (nrow(data$features$attributes) < 1000) {
+  break
+  }
+}
+
+```
+
+
+```{r}
+#removing any unmapped violations
+parking_violations <- drop_na(parking_violations)
+#converting from UNIX time
+parking_violations$issued_date <- anytime(parking_violations$issued_date/1000)
+```
+
+```{r}
+#finding average fine by fine payment status
+parking_violations %>% 
+  group_by(status) %>% 
+  summarise(avg = mean(amount), count = n())
+
+```
+
+```{r}
+#creating basemap in leaflet
+base_map <- leaflet() %>% 
+  addTiles() %>% 
+  setView(lng = -76.1455, lat = 43.0493, zoom = 12.8)
+base_map
+```
+```{r}
+#adding popups for leaflet map
+parking_violations$popup <- paste("Date: ", parking_violations$issued_date, " Location: ", parking_violations$location," Fine: $", parking_violations$amount, ".00", sep = "")
+```
+
+```{r}
+violations_map <- base_map %>% 
+  #adding markers to the map to show where parking violations occur
+  addCircleMarkers(lng=parking_violations$LONG, lat=parking_violations$LAT, popup = parking_violations$popup, radius = 1, fillColor='blue') 
+
+violations_map
+
+```
+
+```{r}
+#creating a cluster map
+cluster_map <- base_map %>% 
+  addCircleMarkers(lng=parking_violations$LONG, lat=parking_violations$LAT, popup = parking_violations$popup, radius = 1, color='blue', clusterOptions = markerClusterOptions())
+```
