@@ -58,5 +58,6 @@ ggplot(zips_joined) +
        fill = "Count of Vacant \nProperties") + 
   theme_void()
 ```
+
 Thank you for using our tutorial. If you would like to see any other tutorials or 
 datasets on the Syracuse Open Data site, please let us know at opendata@syr.gov!
