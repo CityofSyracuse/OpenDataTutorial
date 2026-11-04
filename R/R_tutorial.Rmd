@@ -8,10 +8,13 @@ R is a language for statistical computing and graphics - it is great for working
 with data.
 
 This tutorial assumes users have some experience coding.  Below are the software
-requirement for this tutorial:
-*An installation of R. 
-*An Integrated Development Environment (IDE), like RStudio or Positron. 
-*Alternatively, access to a cloud-based IDE, such as Posit Cloud. 
+requirements for this tutorial:
+
+- An installation of R. 
+
+- An Integrated Development Environment (IDE), like RStudio or Positron.
+
+- Alternatively, access to a cloud-based IDE, such as Posit Cloud. 
 
 ## Packages
 ```{r, message=FALSE}
@@ -50,7 +53,7 @@ zips_joined <- left_join(zip, counts, by =(c("ZIP" = "Zip")))
 ```
 
 ## Mapping
-```{r}
+```{r, fig.align="center", out.width="100%"}
 ggplot(zips_joined) + 
   geom_sf(aes(fill = n), color = "white") +
   scale_fill_viridis_c(option = "mako", direction = -1, na.value = "grey40") +
