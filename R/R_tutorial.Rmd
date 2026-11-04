@@ -1,0 +1,62 @@
+---
+title: "Open Data Syracuse R Tutorial"
+author: ""
+date: ""
+output: html_document
+---
+R is a language for statistical computing and graphics - it is great for working
+with data.
+
+This tutorial assumes users have some experience coding.  Below are the software
+requirement for this tutorial:
+*An installation of R. 
+*An Integrated Development Environment (IDE), like RStudio or Positron. 
+*Alternatively, access to a cloud-based IDE, such as Posit Cloud. 
+
+## Packages
+```{r, message=FALSE}
+library(tidyverse)
+library(sf)
+```
+
+## Reading Data in from the API
+To read in the datasets via the API, we are using the `sf` package to do this since 
+they are spatial datasets, but `jsonlite` is also a great package for reading in 
+JSONs.If preferred, the datasets can also be downloaded manually and the same 
+analysis can be performed. 
+
+```{r, message=FALSE}
+vacant <- st_read("https://services6.arcgis.com/bdPqSfflsdgFRVVM/arcgis/rest/services/Vacant_Properties/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson")
+
+zip <- st_read("https://services6.arcgis.com/bdPqSfflsdgFRVVM/arcgis/rest/services/Syracuse_Zip_Codes_2022_View/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson")
+```
+
+## Grabbing Counts
+In the chunk below, `count` is being used to create a dataframe that shows the number
+of vacant properties per zip code. 
+
+`st_drop_geometry` removes the geometry from the the vacant properties data, since 
+the goal is to map the number of vacant properties in each zip code within the City,
+rather than mapping each individual point. 
+
+```{r}
+counts <- count(st_drop_geometry(vacant), Zip)
+head(counts)
+```
+## Joining 
+Next, the `counts` dataframe is being joined to the zip code polygons.
+```{r}
+zips_joined <- left_join(zip, counts, by =(c("ZIP" = "Zip")))
+```
+
+## Mapping
+```{r}
+ggplot(zips_joined) + 
+  geom_sf(aes(fill = n), color = "white") +
+  scale_fill_viridis_c(option = "mako", direction = -1, na.value = "grey40") +
+  labs(title="Vacant Properties by Zip Code in Syracuse, NY", 
+       fill = "Count of Vacant \nProperties") + 
+  theme_void()
+```
+Thank you for using our tutorial. If you would like to see any other tutorials or 
+datasets on the Syracuse Open Data site, please let us know at opendata@syr.gov!
