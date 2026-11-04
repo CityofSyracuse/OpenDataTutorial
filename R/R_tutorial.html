@@ -356,7 +356,9 @@ display: none;
 
 
 <p>R is a language for statistical computing and graphics - it is great
-for working with data.</p>
+for working with data. This tutorial will show how to read in data using
+the Application Programming Interface (API). It will then show how to
+make a simple map using <code>ggplot2</code>.</p>
 <p>This tutorial assumes users have some experience coding. Below are
 the software requirements for this tutorial:</p>
 <ul>
@@ -424,6 +426,7 @@ code polygons.</p>
 </div>
 <div id="mapping" class="section level2">
 <h2>Mapping</h2>
+<p>The final step is to create a map using <code>ggplot</code>.</p>
 <pre class="r"><code>ggplot(zips_joined) + 
   geom_sf(aes(fill = n), color = &quot;white&quot;) +
   scale_fill_viridis_c(option = &quot;mako&quot;, direction = -1, na.value = &quot;grey40&quot;) +

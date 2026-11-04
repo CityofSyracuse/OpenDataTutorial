@@ -5,7 +5,9 @@ date: ""
 output: html_document
 ---
 R is a language for statistical computing and graphics - it is great for working
-with data.
+with data.  This tutorial will show how to read in data using the Application
+Programming Interface (API).  It will then show how to make a simple map using
+`ggplot2`.
 
 This tutorial assumes users have some experience coding.  Below are the software
 requirements for this tutorial:
@@ -53,6 +55,7 @@ zips_joined <- left_join(zip, counts, by =(c("ZIP" = "Zip")))
 ```
 
 ## Mapping
+The final step is to create a map using `ggplot`.
 ```{r, fig.align="center", out.width="100%"}
 ggplot(zips_joined) + 
   geom_sf(aes(fill = n), color = "white") +
